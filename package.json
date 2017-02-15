@@ -6,10 +6,12 @@
   "dependencies": {
     "body-parser": "^1.16.1",
     "ejs": "^2.5.5",
-    "express": "^4.14.1"
+    "express": "^4.14.1",
+    "nodeman": "^1.1.2"
   },
   "devDependencies": {},
   "scripts": {
+    "start": "express_server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

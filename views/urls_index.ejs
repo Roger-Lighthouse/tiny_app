@@ -15,11 +15,18 @@
 
 
 <% for (key in urls){ %>
-  <li><%= key%> -- <%=urls[key]%></li>
-<% } %>
+    <li><%= key%> -- <%=urls[key]%> -->
+      <form method="POST" action="/urls/<%=key%>/update1">
+        <input type="submit" value="Update">
+      </form>
+      <form method="POST" action="/urls/<%=key%>/delete">
+        <input type="submit" value="Delete">
+      </form>
+    </li>
+<% } %><br/><br/>
 
 
-<a href="">Link To Shorten A New URL</a>
+<a href="/urls/new">Link To Shorten A New URL</a>
 
 </body>
 

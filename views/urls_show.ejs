@@ -12,8 +12,22 @@
   <header>
       <% include ./partials/_header %>
   </header>
-  <p>Just added:
-  <%= shortURL %> -- <%= longURL %>
+  <h2>SHORT URL:<%= shortURL %></h2><br/>
+    <form action="/urls/<%=shortURL%>/update" method="POST" style="margin:150px;">
+        <li><%= shortURL%>
+        <input id="name" type="text" name="name" value=<%=longURL%> style="width: 300px">
+         <input type="submit" value="Update">
+       </li>
+    </form><br/><br/>
+
+
+    Full List:<br/>
+    <% for (key in urls){ %>
+        <li><%= key%> -- <%=urls[key]%> -->
+       </li>
+     </form>
+   <%}%>
+ </p>
 </body>
 
 </html>
