@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <title>TinyApp</title>
+  </head>
+
+  <body>
+
+    <form method='POST' action='/register'>
+      <input type='email' name='email'>
+      <input type='password' name='password'>
+      <input type='submit' value='Register'>
+    </form><br/>
+
+    <%if(message && err){%>
+      <b><%=message%> -- Error Code:<%=err%></b>
+    <%}else{%>
+      <b><%=message%></b>
+    <%}%>
+
+  </body>
+
+
+</html>

@@ -1,12 +1,7 @@
-<h2>****** Tiny App - URL Shortner *****</h2>
+<h2>****** Tiny App - URL Shortner // Current User <%=user_id.email%>(ID:<%=user_id.id%>) *****</h2>
 
-<%if(!username){%>
-  <form action="/login" method="POST" style="margin:150px;">
-    Current Username:<%= username %><input id="name" type="text" name="username"  style="width: 300px">
-    <input type="submit" value="Log In">
-  </form><br/><br/>
-<%}else{%>
-  <form action="/logout" method="POST" style="margin:150px;">
-    Current Username:<%= username %><input type="submit" value="Log Out">
-  </form><br/><br/>
-<%}%>
+<h4>
+  <a href="/login">Log In</a>&nbsp;&nbsp;&nbsp;
+  <a href="/register">Register as a New User</a>&nbsp;&nbsp;&nbsp;
+  <a href="/logout">Log Out</a>
+</h4>

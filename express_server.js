@@ -44,6 +44,21 @@ var urlDatabase = {
   "9sm5xK": "http://www.google.com"
 }
 
+const users = {
+  "user1RandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
+
+
+}
+
 app.get("/test", (req, res) => {
   res.json = {
     "name": "jane Doe"
@@ -60,10 +75,75 @@ app.get("/", (req, res) => {
   // Cookies that have been signed
  // console.log('Signed Cookies: ', req.signedCookies)
 
+  console.log("KOOKEE:", req.cookies);
+  console.log("USRES", users);
+/*
+  if(users[req.cookies["user_id"]]){
+    let templateVars = {user_id: users[req.cookies["user_id"]], message: '', err: 400};
+    res.render("login", templateVars);
+  }else{
+    res.redirect("register");
+  }
+*/
+  let templateVars = {message: '', err: 400};
+  res.render("login", templateVars);
+});
 
-  let templateVars = {  username: req.cookies["username"], urls: urlDatabase };
-  res.render("urls_index", templateVars);
-  //res.redirect("/")
+app.get('/register', (req, res) => {
+    let templateVars = { message: '', err: 400 };
+    res.render('register', templateVars);
+});
+
+app.get('/login', (req, res) => {
+    let templateVars = { message: '', err: 400 };
+    res.render('login', templateVars);
+});
+
+
+
+function checkCurrentUser(req, res){
+  user_id=req.cookies["user_id"];
+  if(users[user_id]){
+    if(users[user_id].email === req.body.email && users[user_id].password === req.body.password){
+        let templateVars = {user_id: users[user_id] , urls: urlDatabase };
+        res.render("urls_index", templateVars);
+    }else if(users[user_id].email === req.body.email && users[user_id].password !== req.body.password){
+      let templateVars = { message: 'Password is Invalid', err: 400 };
+      res.render('login', templateVars);
+
+    }else{
+      let templateVars = { message: 'Log Information is Invalid', err: 400 };
+      res.render('login', templateVars);
+    }
+  }
+}
+
+function checkErrors(req, res){
+  var noErrors = true;
+  if(req.body.email === '' || req.body.password === ''){
+    noErrors = false;
+  }
+  return noErrors;
+}
+
+app.post('/register', (req, res) => {
+  checkCurrentUser(req, res);
+  if(checkErrors(req, res)){
+    let id=generateRandomString();
+    users[id] = {id: id, email: req.body.email, password: req.body.password};
+    res.cookie('user_id', id);
+    console.log(users);
+    res.redirect('/urls');
+  }else{
+    let templateVars = { message: 'Invalid Registration Data', err: 400 };
+    res.render('register', templateVars);
+  }
+});
+
+app.post('/login', (req, res) => {
+  checkCurrentUser(req, res);
+  let templateVars = { message: 'Please Register First', err: 0 };
+  res.render('register', templateVars);
 });
 
 app.get("/about", (req, res) => {
@@ -71,31 +151,23 @@ app.get("/about", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = { username: req.cookies["username"], urls: urlDatabase };
+  console.log('User ID:'+req.cookies["user_id"])
+  let templateVars = { user_id: users[req.cookies["user_id"]] , urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
-
-app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username);
-  res.redirect("/");
+app.get("/logout", (req, res) => {
+  res.redirect("login");
 });
-
-app.post("/logout", (req, res) => {
-  res.clearCookie("username");
-  res.redirect("/");
-});
-
-
 
 app.post("/urls", (req, res) => {
   var ans=req.body;
   shortURL=generateRandomString();
   urlDatabase[shortURL]=ans["longURLa"];
     // debug statement to see POST parameters
-    console.log(urlDatabase);
+    //console.log(urlDatabase);
     let templateVars = {
-     username: req.cookies["username"],
+     user_id: users[req.cookies["user_id"]],
      shortURL: shortURL,
      longURL: ans["longURLa"],
      urls: urlDatabase
@@ -106,25 +178,25 @@ app.post("/urls", (req, res) => {
 app.post("/urls/:id/delete", (req, res) => {
   id=req.params.id;
   delete(urlDatabase[id]);
-  let templateVars = {username: req.cookies["username"], urls: urlDatabase};
+  let templateVars = {user_id: users[req.cookies["user_id"]], urls: urlDatabase};
   res.render("urls_index", templateVars);
 });
 
 app.post("/urls/:id/update", (req, res) => {
-  console.log("GOT HERE!!");
+  //console.log("GOT HERE!!");
   id=req.params.id;
   urlDatabase[id]=req.body.name;
-  console.log('ok?', urlDatabase);
-  let templateVars = {username: req.cookies["username"], urls: urlDatabase};
+  //console.log('ok?', urlDatabase);
+  let templateVars = {user_id: users[req.cookies["user_id"]], urls: urlDatabase};
   res.render("urls_index", templateVars);
 });
 
 app.post("/urls/:id/update1", (req, res) => {
   let shortURL=req.params.id;
   let longURLa=urlDatabase[shortURL];
-  console.log(urlDatabase);
+  //console.log(urlDatabase);
   let templateVars = {
-    username: req.cookies["username"],
+    user_id: users[req.cookies["user_id"]],
     shortURL: shortURL,
     longURL: longURLa,
     urls: urlDatabase
@@ -136,9 +208,9 @@ app.post("/urls/:id/update1", (req, res) => {
 //});
 
 app.get("/urls/new", (req, res) => {
-  console.log("/urls/new");
+  //console.log("/urls/new");
   let templateVars = {
-    username: req.cookies["username"]
+    user_id: users[req.cookies["user_id"]]
   }
   res.render("urls_new", templateVars);
 });
@@ -146,7 +218,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   let longURLa=urlDatabase[req.params.id];
   let templateVars = {
-    username: req.cookies["username"],
+    user_id: req.cookies["user_id"],
     shortURL: req.params.id,
     longURL: longURLa,
     urls: urlDatabase
@@ -160,12 +232,12 @@ app.get("/u/:id", (req, res) => {
   let shortid = req.params.id;
   let longURLa = urlDatabase[shortid];
 
-  console.log('Long URL '+longURLa);
+  //console.log('Long URL '+longURLa);
   if(longURLa){
     res.redirect(longURLa);        // Respond with 'Ok' (we will replace this)
   }else{
     let templateVars = {
-      username: req.cookies["username"],
+      user_id: users[req.cookies["user_id"]],
       shortid: shortid,
       err: 400
     };
@@ -196,8 +268,3 @@ function generateRandomString() {
   return ans;
 }
 
-generateRandomString();
-generateRandomString();
-generateRandomString();
-generateRandomString();
-generateRandomString();
