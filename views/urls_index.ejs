@@ -1,33 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 
+  <head>
+    <title>TinyApp</title>
+  </head>
 
+  <body>
+    <header>
+        <% include ./partials/_header %>
+    </header>
 
+    <table border="1">
+      <tr>
+        <th>Short Key</th><th>Long Key</th><th>Options</th><th>Visit Site</th>
+      </tr>
+        <% for(key in urls){ %>
+          <tr>
+            <td><%=key%></td><td><%=urls[key]%></td>
+              <%if(user_id.urls.includes(key)){%>
+                <td>
+                  <form method="POST" action="/urls/<%=key%>/update1">
+                    <input type="submit" value="Edit" style="display:inline">
+                  </form>
+                  <form method="POST" action="/urls/<%=key%>/delete">
+                    <input type="submit" value="Delete" style="display:inline">
+                  </form>
+                </td>
+              <%}else{%>
+                 <td align=center>None</td>
+              <%}%>
+              <td>
+                <form method="POST" action="/visit/<%=key%>">
+                  <input type="submit" value="Visit Site" style="display:inline">
+                </form>
+              </td>
+          </tr>
+        <%}%>
+      </tr>
+    </table><br/><br/>
 
-<head>
-  <title>TinyApp</title>
-</head>
+    <a href="/urls/new">Link To Shorten A New URL</a>
 
-<body>
-  <header>
-      <% include ./partials/_header %>
-  </header>
-
-
-<% for (key in urls){ %>
-    <li><%= key%> -- <%=urls[key]%> -->
-      <form method="POST" action="/urls/<%=key%>/update1">
-        <input type="submit" value="Update">
-      </form>
-      <form method="POST" action="/urls/<%=key%>/delete">
-        <input type="submit" value="Delete">
-      </form>
-    </li>
-<% } %><br/><br/>
-
-
-<a href="/urls/new">Link To Shorten A New URL</a>
-
-</body>
+  </body>
 
 </html>

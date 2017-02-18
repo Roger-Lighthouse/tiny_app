@@ -9,20 +9,34 @@
   <header>
       <% include ./partials/_header %>
   </header>
-  <h2>SHORT URL:<%= shortURL %></h2><br/>
-    <form action="/urls/<%=shortURL%>/update" method="POST" style="margin:150px;">
-        <li><%= shortURL%>
-        <input id="name" type="text" name="name" value=<%=longURL%> style="width: 300px">
-         <input type="submit" value="Update">
-       </li>
+    <form action="/urls/<%=shortURL%>/update" method="POST">
+      <table border="1">
+        <th colspan="3">URL To Add</th>
+        <tr>
+          <th>Short URL</th>
+          <th colspan="2">Long URL</th>
+        </tr>
+        <tr>
+          <td><%= shortURL%></td>
+          <td><input id="name" type="text" name="name" value=<%=longURL%> style="width: 300px"></td>
+          <td><input type="submit" value="Edit Long URL"></td>
+        </tr>
+      </table>
     </form><br/><br/>
 
-    Full List:<br/>
-    <% for (key in urls){ %>
-        <li><%= key%> -- <%=urls[key]%> -->
-       </li>
-     </form>
-   <%}%>
+    <a href="/urls">Link To Master List</a><br/><br/>
+
+    <table border="1">
+      <tr>
+        <th colspan="2">Your URL List</th>
+      </tr>
+      <tr>
+        <th>Short URL</th><th>Long URL</th>
+      </tr>
+      <% for(var i = 0; i < urls.length; i++){ %>
+        <tr><td><%= urls[i]%></td><td><%=urlDatabase[urls[i]]%></td></tr>
+      <%}%>
+     </table>
  </p>
 </body>
 

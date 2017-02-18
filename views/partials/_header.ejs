@@ -1,7 +1,6 @@
-<h2>****** Tiny App - URL Shortner // Current User <%=user_id.email%>(ID:<%=user_id.id%>) *****</h2>
+<h2>****** Tiny App - URL Shortner // <% if (user_id) { %> Current User <%=user_id.email%> (ID:<%=user_id.id%>) <% } %> *****</h2>
 
 <h4>
   <a href="/login">Log In</a>&nbsp;&nbsp;&nbsp;
-  <a href="/register">Register as a New User</a>&nbsp;&nbsp;&nbsp;
   <a href="/logout">Log Out</a>
 </h4>
