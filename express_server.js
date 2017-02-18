@@ -129,8 +129,11 @@ function checkCurrentUser(req, res){
     }
   }
   if(user){
+    console.log('USER GOOD: ', user);
+    console.log("Hash Value:", bcrypt.hashSync(user.password, 10));
     const hashed_password = bcrypt.hashSync(user.password, 10);
-    if(users[user_id].email === req.body.email){ //&& (bcrypt.compareSync(req.body.password, hashed_password)){
+    console.log('Comparison', (bcrypt.compareSync(user.password, hashed_password)));
+    if((users[user_id].email === req.body.email) && ((bcrypt.compareSync(user.password, hashed_password)))){
       req.session.user_id = user_id;
       let templateVars = {user_id: users[user_id] , urls: urlDatabase };
       res.render("urls_index", templateVars);
@@ -181,11 +184,8 @@ app.post('/register', (req, res) => {
 
 
 app.post('/login', (req, res) => {
-  console.log('Post Login:', users);
-  console.log("Sesh ID:"+req.session.user_id);
   checkCurrentUser(req, res);
-  let templateVars = { message: 'Please Register First', err: 0 };
-  res.render('register', templateVars);
+  res.status(401).send('<h3>401 Error Code - Unauthorized.<br/>You must register first!! <a href="register">Login Page</a>');
 });
 
 
