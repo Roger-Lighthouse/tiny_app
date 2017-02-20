@@ -9,7 +9,7 @@
   <header>
       <% include ./partials/_header %>
   </header>
-    <form action="/urls/<%=shortURL%>/update" method="POST">
+    <form method="POST" action="/urls/<%=shortURL%>?_method=PUT">
       <table border="1">
         <th colspan="3">URL To Add</th>
         <tr>

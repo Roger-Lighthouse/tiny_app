@@ -6,23 +6,23 @@ const bodyParser = require("body-parser");
 //const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session")
 const bcrypt = require("bcrypt");
+const methodOverride = require('method-override')
 const app = express();
 
 var PORT = process.env.PORT || 8080
-
-
-
 app.set('view engine', 'ejs');   //app.set('port', (process.env.PORT || 8080));
 
 // attach middleware
 app.use(bodyParser.json());  //parse form submission in multiple formats
 app.use(bodyParser.urlencoded({extended: true}));
+
 app.use(cookieSession({
   name: 'session',
   keys: ['user_id'],
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 
+app.use(methodOverride('_method'))
 app.use((req, res, next) => {  //test middleware set random
   random=42;
   next();
@@ -69,7 +69,7 @@ const users = {
   }
 }
 
-console.log('Nut', users);
+//console.log('Nut', users);
 
 app.get("/test", (req, res) => {
   res.json = {
@@ -86,7 +86,7 @@ app.get("/", (req, res) => {
   // Cookies that have been signed
   // console.log('Signed Cookies: ', req.signedCookies)
 
-  console.log("/urls cookie value", req.session.user_id);
+  //console.log("/urls cookie value", req.session.user_id);
   if(req.session.user_id){
     res.redirect("/urls");
   }else{
@@ -105,8 +105,8 @@ app.get('/register', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  console.log('Get Log Out:', users);
-  console.log("Sesh ID:"+req.session.user_id);
+  //console.log('Get Log Out:', users);
+  //console.log("Sesh ID:"+req.session.user_id);
   if(req.session.user_id){
     res.redirect("/");
   }else{
@@ -117,8 +117,6 @@ app.get('/login', (req, res) => {
 
 
 function checkCurrentUser(req, res){
-  console.log("Check Current:", users);
-  console.log("USER ID:"+req.session.user_id);
   let user = null;
   let user_id = null;
   for(key in users){
@@ -128,12 +126,9 @@ function checkCurrentUser(req, res){
       break;
     }
   }
-  if(user){
-    console.log('USER GOOD: ', user);
-    console.log("Hash Value:", bcrypt.hashSync(user.password, 10));
-    const hashed_password = bcrypt.hashSync(user.password, 10);
-    console.log('Comparison', (bcrypt.compareSync(user.password, hashed_password)));
-    if((users[user_id].email === req.body.email) && ((bcrypt.compareSync(user.password, hashed_password)))){
+  if(user){  //console.log("Hash Value:", bcrypt.hashSync(user.password, 10));
+    const password = req.body.password;
+    if((users[user_id].email === req.body.email) && ((bcrypt.compareSync(password, user.password)))){
       req.session.user_id = user_id;
       let templateVars = {user_id: users[user_id] , urls: urlDatabase };
       res.render("urls_index", templateVars);
@@ -174,8 +169,8 @@ app.post('/register', (req, res) => {
     let id=generateRandomString();
     users[id] = {id: id, email: req.body.email, password: bcrypt.hashSync(req.body.password, 10), urls:[]};
     req.session.user_id = id;
-    console.log('Register:', users);
-    console.log("Sesh ID:"+req.session.user_id);
+    //console.log('Register:', users);
+    //console.log("Sesh ID:"+req.session.user_id);
     res.redirect('/urls');
   }else{
     res.status(400).send('<h3>400 Error Code - Email AND Password Cannot Be Empty.');
@@ -207,8 +202,8 @@ app.get("/urls", (req, res) => {
 
 app.get("/logout", (req, res) => {
   req.session.user_id = null;
-  console.log('Get Log Out:', users);
-  console.log("Sesh ID:"+req.session.user_id);
+  //console.log('Get Log Out:', users);
+  //console.log("Sesh ID:"+req.session.user_id);
   res.redirect("login");
 });
 
@@ -234,7 +229,7 @@ app.post("/urls", (req, res) => {
 });
 
 
-app.post("/urls/:id/delete", (req, res) => {
+app.delete("/urls/:id", (req, res) => {
   id=req.params.id;
   delete(urlDatabase[id]);
   currUser=users[req.session.user_id]; //req.cookies["user_id"]
@@ -253,7 +248,7 @@ app.post("/visit/:id", (req, res) => {
 });
 
 
-app.post("/urls/:id/update", (req, res) => {
+app.put("/urls/:id", (req, res) => {
   id=req.params.id;
   urlDatabase[id] = req.body.name;
   let templateVars = {user_id: users[req.session.user_id], urls: urlDatabase};
