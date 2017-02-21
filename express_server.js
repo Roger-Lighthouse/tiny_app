@@ -59,7 +59,7 @@ const users = {
     id: "userRandomID",
     email: "user@example.com",
     password: hashed_password1,
-    urls: ["b2xVn2"]
+    urls: ["b2xVn2", "9sm5xK"]
   },
  "user2RandomID": {
     id: "user2RandomID",
@@ -210,7 +210,8 @@ app.get("/logout", (req, res) => {
 
 app.post("/urls", (req, res) => {
   let userId = req.session.user_id;
-  if(req.session.user_id){
+  console.log('a'+req.body.longURLa+'a');
+  if(userId && req.body.longURLa !== 'http://'){
     let shortURL = generateRandomString();
     urlDatabase[shortURL] = req.body.longURLa;
     let currentUser = users[userId];
@@ -224,7 +225,7 @@ app.post("/urls", (req, res) => {
     }
     res.render("urls_show", templateVars);
   }else{
-    res.status(401).send('<h3>401 Error Code - Unauthorized.<br/>You must login first!! <a href="../login">Login Page</a>');
+    res.status(400).send('<h3>400 Error Code - Invalid URL.</h3>');
   }
 });
 
